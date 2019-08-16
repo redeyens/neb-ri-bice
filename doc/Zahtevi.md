@@ -77,6 +77,9 @@ Deflection = (Alpha x p x 0.000001 x H4) / (69000 x t3) in mm.
 
 
 # Primeri
+## Kontrola Rezultata
+Možemo proveriti rezultate [ovde](https://www.easycalculation.com/measurement/aquarium-glass-thickness-calculator.php)
+
 ## Primer 1
 
 AQ: L=500 W=500 H=500
