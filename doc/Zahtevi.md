@@ -13,7 +13,17 @@ The table below lists alpha and beta constants to be used in the formula.
 
 **TODO:** Srediti ovu tabelu da liči na tabelu, ovako se ništa ne vidi
 
-For Main Panels	For Bottom Panels Ratio of L/H	Alpha	Beta	Alpha	Beta 0.5	0.003	0.085 0.666 0.0085	0.1156 1.0 0.022 0.16 0.077	0.453 1.5 0.042	0.26	0.0906	0.5172 2.0 0.056	0.32	0.1017	0.5688 2.5 0.063	0.35	0.111	0.6102 3.0	0.067	0.37	0.1335 0.7134 
+For Main Panels	For Bottom Panels:
+| Ratio of L/H |	Alpha   |	  Beta |
+|:------------:|:--------:|:------:|
+| 0.5	         | 0.003	  |  0.085 |
+| 0.666        | 0.0085   |	0.1156 |
+| 1.0          | 0.022    | 0.16   |
+| 1.5          | 0.042	  | 0.26   |
+| 2.0          | 0.056	  | 0.32	 |
+| 2.5          |	0.063	  | 0.35	 |
+| 3.0	         | 0.067	  | 0.37   |
+
 
 When the ratio is less than 0.5, use Alpha and Beta values for 0.5.
 
