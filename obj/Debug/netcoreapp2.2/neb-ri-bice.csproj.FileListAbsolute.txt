@@ -1,0 +1,11 @@
+C:\Users\Alasov\neb-ri-bice\neb-ri-bice\bin\Debug\netcoreapp2.2\neb-ri-bice.deps.json
+C:\Users\Alasov\neb-ri-bice\neb-ri-bice\bin\Debug\netcoreapp2.2\neb-ri-bice.runtimeconfig.json
+C:\Users\Alasov\neb-ri-bice\neb-ri-bice\bin\Debug\netcoreapp2.2\neb-ri-bice.runtimeconfig.dev.json
+c:\Users\Alasov\neb-ri-bice\neb-ri-bice\bin\Debug\netcoreapp2.2\neb-ri-bice.dll
+c:\Users\Alasov\neb-ri-bice\neb-ri-bice\bin\Debug\netcoreapp2.2\neb-ri-bice.pdb
+c:\Users\Alasov\neb-ri-bice\neb-ri-bice\obj\Debug\netcoreapp2.2\neb-ri-bice.csprojAssemblyReference.cache
+c:\Users\Alasov\neb-ri-bice\neb-ri-bice\obj\Debug\netcoreapp2.2\neb-ri-bice.csproj.CoreCompileInputs.cache
+c:\Users\Alasov\neb-ri-bice\neb-ri-bice\obj\Debug\netcoreapp2.2\neb-ri-bice.AssemblyInfoInputs.cache
+c:\Users\Alasov\neb-ri-bice\neb-ri-bice\obj\Debug\netcoreapp2.2\neb-ri-bice.AssemblyInfo.cs
+c:\Users\Alasov\neb-ri-bice\neb-ri-bice\obj\Debug\netcoreapp2.2\neb-ri-bice.dll
+c:\Users\Alasov\neb-ri-bice\neb-ri-bice\obj\Debug\netcoreapp2.2\neb-ri-bice.pdb
