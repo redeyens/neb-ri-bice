@@ -10,6 +10,7 @@ namespace neb_ri_bice
             const int GravityAcceleration = 10;
             const int GlassElasticity = 69000;
             const int WaterPressure = 5000;
+            
 
             double bendingStressAllowed = CalculateBendingStressAllowed(SafetyFactor);            
 
