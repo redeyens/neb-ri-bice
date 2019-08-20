@@ -7,21 +7,33 @@ namespace Example1
     {
         static void Main()
         {
-            double width = 500;
-            double length = 2000;
-            double waterLevel = 500;
+            double width = GetInput("Enter width [mm]: ");
+            double length = GetInput("Enter length [mm]: ");
+            double waterLevel = GetInput("Enter water level (height) [mm]: ");
             
             double beta = LookupBetaForBottomPanel(length, width);
 
             double bottomThickness = GlassThickness(waterLevel, beta);
 
-            Console.WriteLine($"Required glass thickness is {bottomThickness}");
+            Console.WriteLine();
+            Console.WriteLine($"Required glass thickness is {bottomThickness:N1} mm.");
 
             if(Debugger.IsAttached)
             {
                 Console.WriteLine("Press any key to close...");
                 Console.ReadKey();
             }
+        }
+
+        private static double GetInput(string prompt)
+        {
+            double userInput;
+            do
+            {
+                Console.Write(prompt);
+            } while (!double.TryParse(Console.ReadLine(), out userInput));
+
+            return userInput;
         }
 
         private static double LookupBetaForBottomPanel(double length, double width)
