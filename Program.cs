@@ -5,13 +5,8 @@ namespace neb_ri_bice
     class Program
     {
         static void Main(string[] args)
-        {            
-            const double SafetyFactor = 3.8;
-            const int GravityAcceleration = 10;
-            const int GlassElasticity = 69000;
-            const int WaterPressure = 5000;
-
-            double bendingStressAllowed = CalculateBendingStressAllowed(SafetyFactor);            
+        {  
+            const double bendingStressAllowed = 5.05;
 
             int height = GetDimension("height");
             int width = GetDimension("width");
@@ -24,28 +19,23 @@ namespace neb_ri_bice
 
             double volume = CalculateVolume(height, width, depth);
 
-            double[] frontAndBackThicknessDeflection = CalculateSideGlassThicknessAndDeflection(height, width, bendingStressAllowed, WaterPressure, GlassElasticity);
-            double[] sidesThicknessDeflection = CalculateSideGlassThicknessAndDeflection(height, depth, bendingStressAllowed, WaterPressure, GlassElasticity);
-            double[] botomThicknessDeflection = CalculateBottomGlassThicknessAndDeflection(width, depth, height, bendingStressAllowed, WaterPressure, GlassElasticity);
+            double frontAndBackThicknessDeflection = CalculateSideGlassThickness(height, width, bendingStressAllowed);
+            double sidesThicknessDeflection = CalculateSideGlassThickness(height, depth, bendingStressAllowed);
+            double botomThicknessDeflection = CalculateBottomGlassThickness(width, depth, height, bendingStressAllowed);
 
-            double totalGlassVolume = CalculateVolume(bottomPanelArea, botomThicknessDeflection[0]) 
-                + CalculateVolume(sidePanelsArea, sidesThicknessDeflection[0]) 
-                + CalculateVolume(frontAndBackPanelsArea, frontAndBackThicknessDeflection[0]);
-
-            PrintResult(height,width,depth,totalGlassArea,CalculateVolume(height, width, depth), 
-                sidesThicknessDeflection[0], frontAndBackThicknessDeflection[0], botomThicknessDeflection[0], totalGlassVolume);
-            
+            PrintResult(height, width, depth, totalGlassArea, volume, 
+                sidesThicknessDeflection, frontAndBackThicknessDeflection, botomThicknessDeflection);            
         }
 
-        static void PrintResult(int height, int width, int depth, int totalGlassArea, double waterVolume, double sideThickness, double frontAndBackThickness, double bottomThickness, double totalGlassVolume)
+        static void PrintResult(int height, int width, int depth, int totalGlassArea, double waterVolume, double sideThickness, double frontAndBackThickness, double bottomThickness)
         {
             Console.WriteLine($"\n\n\nDimensions of the aquarium are {width} mm (base) x {depth} mm (base) x {height} mm (height).\n");
-            Console.WriteLine($"Total glass area is {totalGlassArea / 100} cm\u00b2.\n");
+            Console.WriteLine($"Total glass area is {Math.Round(((double)(totalGlassArea / 1000000)), 2)} m\u00b2.\n");
             Console.WriteLine($"Maximum water volume is {waterVolume / 1000000} litres.\n");
             Console.WriteLine($"Side panels thickness is {Math.Round(sideThickness, 2)} mm.");
             Console.WriteLine($"Front and back panels thickness is {Math.Round(frontAndBackThickness, 2)} mm.");
             Console.WriteLine($"Bottom panel thickness is {Math.Round(bottomThickness, 2)} mm.\n");
-            Console.WriteLine($"Total required glass volume amounts to {Math.Round(totalGlassVolume / 1000, 2)} cm\u00b3.");
+
             Console.ReadKey();
         }
 
@@ -55,9 +45,9 @@ namespace neb_ri_bice
             Console.WriteLine($"Input aquarium {dimensionType} in mm and press ENTER: ");
 
             while (!int.TryParse(Console.ReadLine(), out retVal))
-            {
+            {                
                 Console.WriteLine("Must be a whole number! Try again...");
-                Console.WriteLine($"Input aquarium {dimensionType} in mm and press ENTER: ");
+                Console.WriteLine($"Input aquarium {dimensionType} in mm and press ENTER: ");                
             }
 
             return retVal;
@@ -69,108 +59,83 @@ namespace neb_ri_bice
             return retVal;
         }
 
+        static int CalculateWaterPressure(int height)
+        {
+            return height * 10;
+        }
+
         static double CalculateVolume(double a, double b, double c)
         {
             double retVal = a * b * c;
             return retVal;
         }
 
-        static double CalculateVolume(double area, double x)
-        {
-            double retVal = area * x;
-            return retVal;
-        }
-
-        static double CalculateBendingStressAllowed(double safetyFactor)
-        {
-            double retVal = 19.2 / safetyFactor;
-            return retVal;
-        }
-
-        static double[] CalculateSideGlassThicknessAndDeflection(int verticalX, int horizontalY, double bendingStress, int waterPressure, int elasticity)
+        static double CalculateSideGlassThickness(int verticalX, int horizontalY, double bendingStress)
         {
             double ratio = (double)horizontalY / (double)verticalX;
-
-            double alpha = 0;
+            int waterPressure = CalculateWaterPressure(verticalX);
+            
             double beta = 0;            
 
             switch(ratio)
             {
-                case double x when (ratio >= 0 && ratio <= 0.5):
-                    alpha = 0.003;
+                case double x when (x >= 0 && x <= 0.5):                    
                     beta = 0.085;                    
                     break;                  
-                case double x when (ratio > 0.5 && ratio <= 0.7):
-                    alpha = 0.009;
+                case double x when (x > 0.5 && x <= 0.7):                   
                     beta = 0.116;                    
                     break;               
-                case double x when (ratio > 0.7 && ratio <= 1):
-                    alpha = 0.022;
+                case double x when (x > 0.7 && x <= 1):                    
                     beta = 0.160;                    
                     break;               
-                case double x when (ratio > 1 && ratio <= 1.5):
-                    alpha = 0.0442;
+                case double x when (x > 1 && x <= 1.5):                    
                     beta = 0.260;                    
                     break;               
-                case double x when (ratio > 1.5 && ratio <= 2):
-                    alpha = 0.056;
+                case double x when (x > 1.5 && x <= 2):                    
                     beta = 0.320;                    
                     break;               
-                case double x when (ratio > 2 && ratio <= 2.5):
-                    alpha = 0.063;
+                case double x when (x > 2 && x <= 2.5):                    
                     beta = 0.350;                    
                     break;               
-                case double x when (ratio > 2.5):
-                    alpha = 0.067;
+                case double x when (x > 2.5):                    
                     beta = 0.370;                    
                     break;               
             }
 
             double thickness = Math.Sqrt(beta * Math.Pow(verticalX, 3) * (Math.Pow(10, -5) / bendingStress));
 
-            double deflection = alpha * waterPressure * (Math.Pow(10, -6) * Math.Pow(verticalX, 4)) / ( elasticity * Math.Pow(thickness, 3));
-
-            double[] retVal = new double[2] { thickness, deflection };
-
-            return retVal;
+            return thickness;
         }
 
-        static double[] CalculateBottomGlassThicknessAndDeflection(int horizontalX, int horizontalY, int verticalZ, double bendingStress, int waterPressure, int elasticity)
+        static double CalculateBottomGlassThickness(int horizontalX, int horizontalY, int verticalZ, double bendingStress)
         {
             double ratio = (double)horizontalX / (double)horizontalY;
-
-            double alpha = 0;
+            int waterPressure = CalculateWaterPressure(verticalZ);
+            
             double beta = 0;            
 
             switch(ratio)
             {
-                case double x when (ratio >= 0 && ratio <= 1):
-                    alpha = 0.0770;
+                case double x when (x >= 0 && x <= 1):                    
                     beta = 0.4530;                    
                     break;                  
-                case double x when (ratio > 1 && ratio <= 1.5):
-                    alpha = 0.0906;
+                case double x when (x > 1 && x <= 1.5):                    
                     beta = 0.5172;                    
                     break;               
-                case double x when (ratio > 1.5 && ratio <= 2):
-                    alpha = 0.1017;
+                case double x when (x > 1.5 && x <= 2):                    
                     beta = 0.5688;                    
                     break;               
-                case double x when (ratio > 2 && ratio <= 2.5):
-                    alpha = 0.1110;
+                case double x when (x > 2 && x <= 2.5):                    
                     beta = 0.6102;                    
                     break;               
-                case double x when (ratio > 2.5):
-                    alpha = 0.1335;
+                case double x when (x > 2.5):                    
                     beta = 0.7134;                    
                     break;                               
             }
 
-            double thickness = Math.Sqrt(beta * Math.Pow(verticalZ, 3) * (Math.Pow(10, -5) / bendingStress));
-            double deflection = alpha * waterPressure * (Math.Pow(10, -6) * Math.Pow(verticalZ, 4)) / ( elasticity * Math.Pow(thickness, 3));
-            double[] retVal = new double[2] { thickness, deflection };
+            double thickness = Math.Sqrt(beta * Math.Pow(verticalZ, 3) * (Math.Pow(10, -5) / bendingStress));            
 
-            return retVal;
+            return thickness;
         }
     }
 }
