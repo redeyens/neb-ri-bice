@@ -9,3 +9,5 @@ Za podešavanje okruženja:
 3. Kloniraj repo
 
 Potom se uputi na [issues](https://github.com/redeyens/neb-ri-bice/issues), preuzmi issue i spreman/spremna si da počneš.
+
+# test code review
