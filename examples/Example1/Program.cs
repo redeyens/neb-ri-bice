@@ -7,11 +7,13 @@ namespace Example1
     {
         static void Main()
         {
-            // double width = 500;
-            // double length = 500;
+            double width = 500;
+            double length = 2000;
             double waterLevel = 500;
+            
+            double beta = LookupBetaForBottomPanel(length, width);
 
-            double bottomThickness = GlassThickness(waterLevel);
+            double bottomThickness = GlassThickness(waterLevel, beta);
 
             Console.WriteLine($"Required glass thickness is {bottomThickness}");
 
@@ -22,7 +24,24 @@ namespace Example1
             }
         }
 
-        private static double GlassThickness(double waterLevel)
+        private static double LookupBetaForBottomPanel(double length, double width)
+        {
+            // algorithm defines we always treat length as greater dimension
+            // this implies ratio is always >= 1
+            double sidesRatio = (length > width) ? length / width : width / length;
+
+            if(sidesRatio < 1.5)
+                return 0.4530;
+            if(sidesRatio < 2.0)
+                return 0.5172;
+            if(sidesRatio < 2.5)
+                return 0.5688;
+            if(sidesRatio < 3.0)
+                return 0.6102;
+            return 0.7134;
+        }
+
+        private static double GlassThickness(double waterLevel, double beta)
         {
             double scalingFactor = 0.00001;
             double glassTensileStrength = 19.2;
@@ -30,8 +49,6 @@ namespace Example1
             
             double maxBendingStress = glassTensileStrength / safetyFactor;
             
-            double beta = 0.4530;
-
             return Math.Sqrt(beta * Math.Pow(waterLevel, 3) * scalingFactor / maxBendingStress);
         }
     }
