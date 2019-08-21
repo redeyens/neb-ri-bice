@@ -49,7 +49,10 @@ namespace Example1
             return (bottomPanelArea + 2 * frontPanelArea + 2 * sidePanelArea) / mmSquaredPerMeterSquared;
         }
 
-        private static object WaterVolumeLiters(double width, double length, double waterLevel) => width * length * waterLevel / mmCubePerLiter;
+        private static object WaterVolumeLiters(double width, double length, double waterLevel)
+        {
+            return width * length * waterLevel / mmCubePerLiter;
+        }
 
         private static double LookupBetaForSidePanel(double length, double waterLevel)
         {
@@ -77,16 +80,26 @@ namespace Example1
             do
             {
                 Console.Write(prompt);
-            } while (!double.TryParse(Console.ReadLine(), out userInput));
+            } while (!double.TryParse(Console.ReadLine(), out userInput) || !InputIsValid(userInput));
 
             return userInput;
         }
 
+        private static bool InputIsValid(double userInput)
+        {
+            return userInput > 0;
+        }
+
         private static double LookupBetaForBottomPanel(double length, double width)
         {
+            double sidesRatio;
+
             // algorithm defines we always treat length as greater dimension
             // this implies ratio is always >= 1
-            double sidesRatio = (length > width) ? length / width : width / length;
+            if (length > width)
+                sidesRatio = length / width;
+            else
+                sidesRatio = width / length;
 
             if (sidesRatio < 1.5)
                 return 0.4530;
