@@ -5,23 +5,23 @@
    "version": "0.2.0",
    "configurations": [
         {
-            "name": "Example1 .NET Core Launch (console)",
+            "name": ".NET Core Launch (console)",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/examples/Example1/bin/Debug/netcoreapp2.2/Example1.dll",
+            "program": "${workspaceFolder}/bin/Debug/netcoreapp2.2/neb-ri-bice.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/examples/Example1",
+            "cwd": "${workspaceFolder}",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
-            "console": "integratedTerminal",
+            "console": "internalConsole",
             "stopAtEntry": false
         },
         {
             "name": ".NET Core Attach",
             "type": "coreclr",
             "request": "attach",
-            "processId": "${command:pickProcess}"
+            "processId": "${command:pickProcess}" 
         }
     ]
 }
