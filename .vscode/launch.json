@@ -10,11 +10,24 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/bin/Debug/netcoreapp2.2/neb-ri-bice.dll",
+            "program": "${workspaceFolder}/src/bin/Debug/netcoreapp2.2/neb-ri-bice.dll",
             "args": [],
             "cwd": "${workspaceFolder}",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
-            "console": "internalConsole",
+            "console": "integratedTerminal",
+            "stopAtEntry": false
+        },
+        {
+            "name": "Example1 .NET Core Launch (console)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build_Example1",
+            // If you have changed target frameworks, make sure to update the program path.
+            "program": "${workspaceFolder}/examples/Example1/bin/Debug/netcoreapp2.2/Example1.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/examples/Example1",
+            // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
+            "console": "integratedTerminal",
             "stopAtEntry": false
         },
         {
