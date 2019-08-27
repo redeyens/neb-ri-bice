@@ -15,70 +15,60 @@ namespace Example2
             Console.WriteLine();
 
             Inventory inventory = new Inventory();
-            double[] selectedAreaPerThickness = inventory.SelectFromAvailablePanels(aquarium.Panels);
 
             Console.WriteLine();
             Console.WriteLine($"Total glass area is {TotalArea(aquarium.Panels):N1} m^2.");
             Console.WriteLine($"Total water volume is {aquarium.Volume:N1} l.");
 
-            if (AquariumCanBeConstructed(selectedAreaPerThickness, aquarium.Panels))
-            {
-                PrintInvoice(inventory.availableGlassPanelThickness, selectedAreaPerThickness, inventory.glassPanelPrices);
-            }
-            else
+            Invoice invoice = inventory.CreateInvoice(aquarium.Panels);
+            if (invoice.IsEmpty)
             {
                 Console.WriteLine();
                 Console.WriteLine("Could not construct aquarium from available glass panels.");
             }
-
-        }
-
-        private static bool AquariumCanBeConstructed(double[] selectedAreaPerThickness, GlassPanel[] panels)
-        {
-            return Sum(selectedAreaPerThickness) == TotalArea(panels);
-        }
-
-        private static double TotalArea(GlassPanel[] panels)
-        {
-            double total = 0;
-            for (int i = 0; i < panels.Length; i++)
+            else
             {
-                total += panels[i].Area;
+                PrintInvoice(invoice);
             }
-            return total;
+
         }
 
-        private static double Sum(double[] selectedAreaPerThickness)
-        {
-            double total = 0;
-            for (int i = 0; i < selectedAreaPerThickness.Length; i++)
-            {
-                total += selectedAreaPerThickness[i];
-            }
-            return total;
-        }
-
-        private static void PrintInvoice(double[] availableGlassPanelThickness, double[] requiredGlassPanelArea, double[] glassPanelPrices)
+        private static void PrintInvoice(Invoice invoice)
         {
             Console.WriteLine();
-            Console.WriteLine($"Item \t\t\t Qty \t Unit \t Unit Price \t Price");
-            Console.WriteLine("------------------------------------------------------------------");
+            PrintInvoiceHeader();
 
             double totalPrice = 0.0;
-            for (int i = 0; i < availableGlassPanelThickness.Length; i++)
+            foreach (var item in invoice.Items)
             {
-                if (requiredGlassPanelArea[i] > 0.0)
-                {
-                    double itemPrice = requiredGlassPanelArea[i] * glassPanelPrices[i];
-                    totalPrice += itemPrice;
-
-                    Console.WriteLine($"Clear glass {availableGlassPanelThickness[i]:N0} mm\t{requiredGlassPanelArea[i]:N1} \t m^2 \t {glassPanelPrices[i]:N2} \t\t {itemPrice}");
-                }
+                PrintInvoiceItem(item);
+                totalPrice += item.Price;
             }
 
-            Console.WriteLine("==================================================================");
-            Console.WriteLine($"\t\t\t\t\t\tTotal:\t {totalPrice}");
+            PrintInvoiceFooter(totalPrice);
+        }
 
+        private static void PrintInvoiceFooter(double totalPrice)
+        {
+            Console.WriteLine("================================================================================");
+            object titleTotal = "Total:";
+            Console.WriteLine($"{titleTotal,69} {totalPrice,10:N2}");
+        }
+
+        private static void PrintInvoiceHeader()
+        {
+            string titleName = "Item";
+            string titleQuantity = "Quantity";
+            string titleUnit = "Unit";
+            string titleUnitPrice = "Unit Price";
+            string titlePrice = "Price";
+            Console.WriteLine($"{titleName,-40} {titleQuantity,9:N1} {titleUnit,-7} {titleUnitPrice,10:N2} {titlePrice,10:N2}");
+            Console.WriteLine("--------------------------------------------------------------------------------");
+        }
+
+        private static void PrintInvoiceItem(InvoiceItem item)
+        {
+            Console.WriteLine($"{item.Name,-40} {item.Quantity,9:N1} {item.Unit,-7} {item.UnitPrice,10:N2} {item.Price,10:N2}");
         }
 
         private static double GetInput(string prompt)
@@ -95,6 +85,16 @@ namespace Example2
         private static bool InputIsValid(double userInput)
         {
             return userInput > 0;
+        }
+
+        private static double TotalArea(GlassPanel[] panels)
+        {
+            double total = 0;
+            for (int i = 0; i < panels.Length; i++)
+            {
+                total += panels[i].Area;
+            }
+            return total;
         }
 
 
