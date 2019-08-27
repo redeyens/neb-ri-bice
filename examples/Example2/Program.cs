@@ -17,27 +17,22 @@ namespace Example2
             GlassPanel[] requiredPanels = new GlassPanel[5];
 
             double betaBottomPanel = LookupBetaForBottomPanel(length, width);
-            GlassPanel bottomPanel = new GlassPanel("bottom panel", length, width, waterLevel, betaBottomPanel);
-            requiredPanels[0] = bottomPanel;
+            requiredPanels[0] = new GlassPanel("bottom panel", length, width, waterLevel, betaBottomPanel);
 
             double betaFrontPanel = LookupBetaForSidePanel(length, waterLevel);
-            GlassPanel frontPanel = new GlassPanel("front panel", length, waterLevel, waterLevel, betaFrontPanel);
-            requiredPanels[1] = frontPanel;
-            frontPanel = new GlassPanel("back panel", length, waterLevel, waterLevel, betaFrontPanel);
-            requiredPanels[2] = frontPanel;
+            requiredPanels[1] = new GlassPanel("front panel", length, waterLevel, waterLevel, betaFrontPanel);
+            requiredPanels[2] = new GlassPanel("back panel", length, waterLevel, waterLevel, betaFrontPanel);
 
             double betaSidePanel = LookupBetaForSidePanel(width, waterLevel);
-            GlassPanel sidePanel = new GlassPanel("left panel", waterLevel, width, waterLevel, betaSidePanel);
-            requiredPanels[3] = sidePanel;
-            sidePanel = new GlassPanel("right panel", waterLevel, width, waterLevel, betaSidePanel);
-            requiredPanels[4] = sidePanel;
+            requiredPanels[3] = new GlassPanel("left panel", waterLevel, width, waterLevel, betaSidePanel);
+            requiredPanels[4] = new GlassPanel("right panel", waterLevel, width, waterLevel, betaSidePanel);
 
             Console.WriteLine();
 
             double[] selectedAreaPerThickness = SelectFromAvailablePanels(requiredPanels, availableGlassPanelThickness);
 
             Console.WriteLine();
-            Console.WriteLine($"Total glass area is {TotalGlassArea(bottomPanel.Area, frontPanel.Area * 2, sidePanel.Area * 2):N1} m^2.");
+            Console.WriteLine($"Total glass area is {TotalArea(requiredPanels):N1} m^2.");
             Console.WriteLine($"Total water volume is {WaterVolumeLiters(width, length, waterLevel):N1} l.");
 
             if (AquariumCanBeConstructed(selectedAreaPerThickness, requiredPanels))
@@ -136,11 +131,6 @@ namespace Example2
             }
 
             return 0;
-        }
-
-        private static object TotalGlassArea(double bottomPanelArea, double frontPanelArea, double sidePanelArea)
-        {
-            return (bottomPanelArea + frontPanelArea + sidePanelArea);
         }
 
         private static object WaterVolumeLiters(double width, double length, double waterLevel)
