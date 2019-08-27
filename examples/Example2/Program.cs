@@ -18,21 +18,10 @@ namespace Example2
             double waterLevel = GetInput("Enter water level (height) [mm]: ");
             Console.WriteLine();
 
-            double betaBottomPanel = LookupBetaForBottomPanel(length, width);
-            double bottomPanelAreaMeters = AddPanelToInvoice("bottom", availableGlassPanelThickness, orderedGlassPanels, width, length, waterLevel, betaBottomPanel);
-
-            double betaSidePanel = LookupBetaForSidePanel(width, length);
-            double frontPanelAreaMeters = AddPanelToInvoice("front", availableGlassPanelThickness, orderedGlassPanels, length, waterLevel, waterLevel, betaSidePanel);
-            double backPanelAreaMeters = AddPanelToInvoice("back", availableGlassPanelThickness, orderedGlassPanels, length, waterLevel, waterLevel, betaSidePanel);
-
-            double leftPanelAreaMeters = AddPanelToInvoice("left", availableGlassPanelThickness, orderedGlassPanels, width, waterLevel, waterLevel, betaSidePanel);
-            double rightPanelAreaMeters = AddPanelToInvoice("right", availableGlassPanelThickness, orderedGlassPanels, width, waterLevel, waterLevel, betaSidePanel);
-
-            double totalGlassArea = bottomPanelAreaMeters + frontPanelAreaMeters + backPanelAreaMeters + leftPanelAreaMeters + rightPanelAreaMeters;
+            double totalGlassArea = CreateAquariumPanels(availableGlassPanelThickness, orderedGlassPanels, width, length, waterLevel);
             double invoiceGlassArea = Sum(orderedGlassPanels);
-            Console.WriteLine();
-            Console.WriteLine($"Total glass area is {totalGlassArea:N1} m^2.");
-            Console.WriteLine($"Total water volume is {WaterVolumeLiters(width, length, waterLevel):N1} l.");
+
+            PrintAquariumSummary(width, length, waterLevel, totalGlassArea);
 
             if (AquariumCanBeConstructed(totalGlassArea, invoiceGlassArea))
             {
@@ -44,6 +33,28 @@ namespace Example2
                 Console.WriteLine("Could not construct aquarium from available glass panels.");
             }
 
+        }
+
+        private static void PrintAquariumSummary(double width, double length, double waterLevel, double totalGlassArea)
+        {
+            Console.WriteLine();
+            Console.WriteLine($"Total glass area is {totalGlassArea:N1} m^2.");
+            Console.WriteLine($"Total water volume is {WaterVolumeLiters(width, length, waterLevel):N1} l.");
+        }
+
+        private static double CreateAquariumPanels(double[] availableGlassPanelThickness, double[] orderedGlassPanels, double width, double length, double waterLevel)
+        {
+            double betaBottomPanel = LookupBetaForBottomPanel(length, width);
+            double bottomPanelAreaMeters = AddPanelToInvoice("bottom", availableGlassPanelThickness, orderedGlassPanels, width, length, waterLevel, betaBottomPanel);
+
+            double betaSidePanel = LookupBetaForSidePanel(width, length);
+            double frontPanelAreaMeters = AddPanelToInvoice("front", availableGlassPanelThickness, orderedGlassPanels, length, waterLevel, waterLevel, betaSidePanel);
+            double backPanelAreaMeters = AddPanelToInvoice("back", availableGlassPanelThickness, orderedGlassPanels, length, waterLevel, waterLevel, betaSidePanel);
+
+            double leftPanelAreaMeters = AddPanelToInvoice("left", availableGlassPanelThickness, orderedGlassPanels, width, waterLevel, waterLevel, betaSidePanel);
+            double rightPanelAreaMeters = AddPanelToInvoice("right", availableGlassPanelThickness, orderedGlassPanels, width, waterLevel, waterLevel, betaSidePanel);
+
+            return bottomPanelAreaMeters + frontPanelAreaMeters + backPanelAreaMeters + leftPanelAreaMeters + rightPanelAreaMeters;
         }
 
         private static double Sum(double[] values)
