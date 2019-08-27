@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Example2
+namespace Example3
 {
     class Inventory
     {
