@@ -18,32 +18,25 @@ namespace Example2
             double waterLevel = GetInput("Enter water level (height) [mm]: ");
             Console.WriteLine();
 
-            double bottomPanelAreaMeters = length * width / mmSquaredPerMeterSquared;
+            double bottomPanelAreaMeters;
             double betaBottomPanel = LookupBetaForBottomPanel(length, width);
-            double bottomPanelMinimumThickness = GlassThickness(waterLevel, betaBottomPanel);
-            double bottomPanelThickness = GetAvailableGlassThickness(bottomPanelMinimumThickness, availableGlassPanelThickness);
-            AggregateRequiredPanels(bottomPanelThickness, bottomPanelAreaMeters, requiredGlassPanelArea, availableGlassPanelThickness);
-            Console.WriteLine($"Required glass thickness for bottom panel is {bottomPanelThickness:N0} mm, minimum was {bottomPanelMinimumThickness:N1} mm.");
+            GetPanel("bottom", availableGlassPanelThickness, requiredGlassPanelArea, width, length, waterLevel, out bottomPanelAreaMeters,  betaBottomPanel);
 
-            double frontPanelAreaMeters = length * waterLevel / mmSquaredPerMeterSquared;
-            double betaFrontPanel = LookupBetaForSidePanel(length, waterLevel);
-            double frontPanelMinimumThickness = GlassThickness(waterLevel, betaFrontPanel);
-            double frontPanelThickness = GetAvailableGlassThickness(frontPanelMinimumThickness, availableGlassPanelThickness);
-            AggregateRequiredPanels(frontPanelThickness, 2 * frontPanelAreaMeters, requiredGlassPanelArea, availableGlassPanelThickness);
-            Console.WriteLine($"Required glass thickness for front/back panel {frontPanelThickness:N0} mm, minimum was {frontPanelMinimumThickness:N1} mm.");
+            double frontPanelAreaMeters, backPanelAreaMeters, leftPanelAreaMeters, rightPanelAreaMeters;
+            double betaSidePanel = LookupBetaForSidePanel(width, length);
+            GetPanel("front", availableGlassPanelThickness, requiredGlassPanelArea, length, waterLevel, waterLevel, out frontPanelAreaMeters, betaSidePanel);
+            GetPanel("back", availableGlassPanelThickness, requiredGlassPanelArea, length, waterLevel, waterLevel, out backPanelAreaMeters, betaSidePanel);
 
-            double sidePanelAreaMeters = width * waterLevel / mmSquaredPerMeterSquared;
-            double betaSidePanel = LookupBetaForSidePanel(width, waterLevel);
-            double sidePanelMinimumThickness = GlassThickness(waterLevel, betaSidePanel);
-            double sidePanelThickness = GetAvailableGlassThickness(sidePanelMinimumThickness, availableGlassPanelThickness);
-            AggregateRequiredPanels(sidePanelThickness, 2 * sidePanelAreaMeters, requiredGlassPanelArea, availableGlassPanelThickness);
-            Console.WriteLine($"Required glass thickness for left/right panel {sidePanelThickness:N0} mm, minimum was {sidePanelMinimumThickness:N1} mm.");
+            GetPanel("left", availableGlassPanelThickness, requiredGlassPanelArea, width, waterLevel, waterLevel, out leftPanelAreaMeters, betaSidePanel);
+            GetPanel("right", availableGlassPanelThickness, requiredGlassPanelArea, width, waterLevel, waterLevel, out rightPanelAreaMeters, betaSidePanel);
 
+            double totalGlassArea = bottomPanelAreaMeters + frontPanelAreaMeters + backPanelAreaMeters + leftPanelAreaMeters + rightPanelAreaMeters;
+            double invoiceGlassArea = Sum(requiredGlassPanelArea);
             Console.WriteLine();
-            Console.WriteLine($"Total glass area is {TotalGlassArea(bottomPanelAreaMeters, frontPanelAreaMeters, sidePanelAreaMeters):N1} m^2.");
+            Console.WriteLine($"Total glass area is {totalGlassArea:N1} m^2.");
             Console.WriteLine($"Total water volume is {WaterVolumeLiters(width, length, waterLevel):N1} l.");
 
-            if (AquariumCanBeConstructed(bottomPanelThickness, frontPanelThickness, sidePanelThickness))
+            if (AquariumCanBeConstructed(totalGlassArea, invoiceGlassArea))
             {
                 PrintInvoice(availableGlassPanelThickness, requiredGlassPanelArea, glassPanelPrices);
             }
@@ -55,9 +48,28 @@ namespace Example2
 
         }
 
-        private static bool AquariumCanBeConstructed(double bottomPanelThickness, double frontPanelThickness, double sidePanelThickness)
+        private static double Sum(double[] values)
         {
-            return bottomPanelThickness > 0 && frontPanelThickness > 0 && sidePanelThickness > 0;
+            double sum = 0;
+            for (int i = 0; i < values.Length; i++)
+            {
+                sum += values[i];
+            }
+            return sum;
+        }
+
+        private static void GetPanel(string whichPanel, double[] availableGlassPanelThickness, double[] requiredGlassPanelArea, double width, double length, double waterLevel, out double panelAreaMeters, double betaSidePanel)
+        {
+            panelAreaMeters = width * length / mmSquaredPerMeterSquared;
+            double panelMinimumThickness = GlassThickness(waterLevel, betaSidePanel);
+            double panelThickness = GetAvailableGlassThickness(panelMinimumThickness, availableGlassPanelThickness);
+            AggregateRequiredPanels(panelThickness, panelAreaMeters, requiredGlassPanelArea, availableGlassPanelThickness);
+            Console.WriteLine($"Required glass thickness for {whichPanel} panel {panelThickness:N0} mm, minimum was {panelMinimumThickness:N1} mm.");
+        }
+
+        private static bool AquariumCanBeConstructed(double totalGlassArea, double invoiceGlassArea)
+        {
+            return totalGlassArea == invoiceGlassArea;
         }
 
         private static void PrintInvoice(double[] availableGlassPanelThickness, double[] requiredGlassPanelArea, double[] glassPanelPrices)
@@ -130,11 +142,6 @@ namespace Example2
             }
 
             return 0;
-        }
-
-        private static object TotalGlassArea(double bottomPanelArea, double frontPanelArea, double sidePanelArea)
-        {
-            return (bottomPanelArea + 2 * frontPanelArea + 2 * sidePanelArea);
         }
 
         private static object WaterVolumeLiters(double width, double length, double waterLevel)
