@@ -6,9 +6,6 @@ namespace Example2
     {
         static void Main()
         {
-            double[] availableGlassPanelThickness = new double[] { 4.0, 6.0, 8.0, 10.0, 12.0, 15.0, 20.0, 30.0, 40.0, 50.0 };
-            double[] glassPanelPrices = new double[] { 14.0, 18.0, 25.0, 31.0, 45.0, 100.0, 100.0, 55.0, 215.0, 300.0 };
-
             double width = GetInput("Enter width [mm]: ");
             double length = GetInput("Enter length [mm]: ");
             double waterLevel = GetInput("Enter water level (height) [mm]: ");
@@ -17,7 +14,8 @@ namespace Example2
 
             Console.WriteLine();
 
-            double[] selectedAreaPerThickness = SelectFromAvailablePanels(aquarium.Panels, availableGlassPanelThickness);
+            Inventory inventory = new Inventory();
+            double[] selectedAreaPerThickness = inventory.SelectFromAvailablePanels(aquarium.Panels);
 
             Console.WriteLine();
             Console.WriteLine($"Total glass area is {TotalArea(aquarium.Panels):N1} m^2.");
@@ -25,7 +23,7 @@ namespace Example2
 
             if (AquariumCanBeConstructed(selectedAreaPerThickness, aquarium.Panels))
             {
-                PrintInvoice(availableGlassPanelThickness, selectedAreaPerThickness, glassPanelPrices);
+                PrintInvoice(inventory.availableGlassPanelThickness, selectedAreaPerThickness, inventory.glassPanelPrices);
             }
             else
             {
@@ -33,20 +31,6 @@ namespace Example2
                 Console.WriteLine("Could not construct aquarium from available glass panels.");
             }
 
-        }
-
-        private static double[] SelectFromAvailablePanels(GlassPanel[] panels, double[] availableGlassPanelThickness)
-        {
-            double[] selectedAreaPerThickness = new double[availableGlassPanelThickness.Length];
-            for (int i = 0; i < panels.Length; i++)
-            {
-                GlassPanel currentPanel = panels[i];
-                double currentPanelThickness = GetAvailableGlassThickness(currentPanel.MinimumAllowedThickness, availableGlassPanelThickness);
-                AggregateRequiredPanels(currentPanelThickness, currentPanel.Area, selectedAreaPerThickness, availableGlassPanelThickness);
-                Console.WriteLine($"Required glass thickness for {currentPanel.Name} is {currentPanelThickness:N0} mm, minimum was {currentPanel.MinimumAllowedThickness:N1} mm.");
-            }
-
-            return selectedAreaPerThickness;
         }
 
         private static bool AquariumCanBeConstructed(double[] selectedAreaPerThickness, GlassPanel[] panels)
@@ -95,30 +79,6 @@ namespace Example2
             Console.WriteLine("==================================================================");
             Console.WriteLine($"\t\t\t\t\t\tTotal:\t {totalPrice}");
 
-        }
-
-        private static void AggregateRequiredPanels(double panelThickness, double panelArea, double[] requiredGlassPanelArea, double[] availableGlassPanelThickness)
-        {
-            for (int i = 0; i < availableGlassPanelThickness.Length; i++)
-            {
-                if (panelThickness == availableGlassPanelThickness[i])
-                {
-                    requiredGlassPanelArea[i] += panelArea;
-                }
-            }
-        }
-
-        private static double GetAvailableGlassThickness(double minimumThickness, double[] availableGlassPanelThickness)
-        {
-            for (int i = 0; i < availableGlassPanelThickness.Length; i++)
-            {
-                if (availableGlassPanelThickness[i] >= minimumThickness)
-                {
-                    return availableGlassPanelThickness[i];
-                }
-            }
-
-            return 0;
         }
 
         private static double GetInput(string prompt)
