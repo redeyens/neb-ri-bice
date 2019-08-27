@@ -4,7 +4,6 @@ namespace Example2
 {
     class Program
     {
-        private const double mmCubePerLiter = 1.0e6;
         static void Main()
         {
             double[] availableGlassPanelThickness = new double[] { 4.0, 6.0, 8.0, 10.0, 12.0, 15.0, 20.0, 30.0, 40.0, 50.0 };
@@ -14,28 +13,17 @@ namespace Example2
             double length = GetInput("Enter length [mm]: ");
             double waterLevel = GetInput("Enter water level (height) [mm]: ");
 
-            GlassPanel[] requiredPanels = new GlassPanel[5];
-
-            double betaBottomPanel = LookupBetaForBottomPanel(length, width);
-            requiredPanels[0] = new GlassPanel("bottom panel", length, width, waterLevel, betaBottomPanel);
-
-            double betaFrontPanel = LookupBetaForSidePanel(length, waterLevel);
-            requiredPanels[1] = new GlassPanel("front panel", length, waterLevel, waterLevel, betaFrontPanel);
-            requiredPanels[2] = new GlassPanel("back panel", length, waterLevel, waterLevel, betaFrontPanel);
-
-            double betaSidePanel = LookupBetaForSidePanel(width, waterLevel);
-            requiredPanels[3] = new GlassPanel("left panel", waterLevel, width, waterLevel, betaSidePanel);
-            requiredPanels[4] = new GlassPanel("right panel", waterLevel, width, waterLevel, betaSidePanel);
+            Aquarium aquarium = new Aquarium(width, length, waterLevel);
 
             Console.WriteLine();
 
-            double[] selectedAreaPerThickness = SelectFromAvailablePanels(requiredPanels, availableGlassPanelThickness);
+            double[] selectedAreaPerThickness = SelectFromAvailablePanels(aquarium.Panels, availableGlassPanelThickness);
 
             Console.WriteLine();
-            Console.WriteLine($"Total glass area is {TotalArea(requiredPanels):N1} m^2.");
-            Console.WriteLine($"Total water volume is {WaterVolumeLiters(width, length, waterLevel):N1} l.");
+            Console.WriteLine($"Total glass area is {TotalArea(aquarium.Panels):N1} m^2.");
+            Console.WriteLine($"Total water volume is {aquarium.Volume:N1} l.");
 
-            if (AquariumCanBeConstructed(selectedAreaPerThickness, requiredPanels))
+            if (AquariumCanBeConstructed(selectedAreaPerThickness, aquarium.Panels))
             {
                 PrintInvoice(availableGlassPanelThickness, selectedAreaPerThickness, glassPanelPrices);
             }
@@ -133,31 +121,6 @@ namespace Example2
             return 0;
         }
 
-        private static object WaterVolumeLiters(double width, double length, double waterLevel)
-        {
-            return width * length * waterLevel / mmCubePerLiter;
-        }
-
-        private static double LookupBetaForSidePanel(double length, double waterLevel)
-        {
-            double sidesRatio = length / waterLevel;
-
-            if (sidesRatio < 0.7)
-                return 0.085;
-            if (sidesRatio < 1.0)
-                return 0.116;
-            if (sidesRatio < 1.5)
-                return 0.160;
-            if (sidesRatio < 2.0)
-                return 0.260;
-            if (sidesRatio < 2.5)
-                return 0.320;
-            if (sidesRatio < 3.0)
-                return 0.350;
-            return 0.370;
-
-        }
-
         private static double GetInput(string prompt)
         {
             double userInput;
@@ -174,27 +137,6 @@ namespace Example2
             return userInput > 0;
         }
 
-        private static double LookupBetaForBottomPanel(double length, double width)
-        {
-            double sidesRatio;
-
-            // algorithm defines we always treat length as greater dimension
-            // this implies ratio is always >= 1
-            if (length > width)
-                sidesRatio = length / width;
-            else
-                sidesRatio = width / length;
-
-            if (sidesRatio < 1.5)
-                return 0.4530;
-            if (sidesRatio < 2.0)
-                return 0.5172;
-            if (sidesRatio < 2.5)
-                return 0.5688;
-            if (sidesRatio < 3.0)
-                return 0.6102;
-            return 0.7134;
-        }
 
     }
 }
