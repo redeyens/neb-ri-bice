@@ -16,29 +16,27 @@ namespace Example2
             double width = GetInput("Enter width [mm]: ");
             double length = GetInput("Enter length [mm]: ");
             double waterLevel = GetInput("Enter water level (height) [mm]: ");
+            Console.WriteLine();
 
-            double frontPanelAreaMeters = length * waterLevel / mmSquaredPerMeterSquared;
-            double sidePanelAreaMeters = width * waterLevel / mmSquaredPerMeterSquared;
             double bottomPanelAreaMeters = length * width / mmSquaredPerMeterSquared;
-
             double betaBottomPanel = LookupBetaForBottomPanel(length, width);
             double bottomPanelMinimumThickness = GlassThickness(waterLevel, betaBottomPanel);
             double bottomPanelThickness = GetAvailableGlassThickness(bottomPanelMinimumThickness, availableGlassPanelThickness);
             AggregateRequiredPanels(bottomPanelThickness, bottomPanelAreaMeters, requiredGlassPanelArea, availableGlassPanelThickness);
+            Console.WriteLine($"Required glass thickness for bottom panel is {bottomPanelThickness:N0} mm, minimum was {bottomPanelMinimumThickness:N1} mm.");
 
+            double frontPanelAreaMeters = length * waterLevel / mmSquaredPerMeterSquared;
             double betaFrontPanel = LookupBetaForSidePanel(length, waterLevel);
             double frontPanelMinimumThickness = GlassThickness(waterLevel, betaFrontPanel);
             double frontPanelThickness = GetAvailableGlassThickness(frontPanelMinimumThickness, availableGlassPanelThickness);
             AggregateRequiredPanels(frontPanelThickness, 2 * frontPanelAreaMeters, requiredGlassPanelArea, availableGlassPanelThickness);
+            Console.WriteLine($"Required glass thickness for front/back panel {frontPanelThickness:N0} mm, minimum was {frontPanelMinimumThickness:N1} mm.");
 
+            double sidePanelAreaMeters = width * waterLevel / mmSquaredPerMeterSquared;
             double betaSidePanel = LookupBetaForSidePanel(width, waterLevel);
             double sidePanelMinimumThickness = GlassThickness(waterLevel, betaSidePanel);
             double sidePanelThickness = GetAvailableGlassThickness(sidePanelMinimumThickness, availableGlassPanelThickness);
             AggregateRequiredPanels(sidePanelThickness, 2 * sidePanelAreaMeters, requiredGlassPanelArea, availableGlassPanelThickness);
-
-            Console.WriteLine();
-            Console.WriteLine($"Required glass thickness for bottom panel is {bottomPanelThickness:N0} mm, minimum was {bottomPanelMinimumThickness:N1} mm.");
-            Console.WriteLine($"Required glass thickness for front/back panel {frontPanelThickness:N0} mm, minimum was {frontPanelMinimumThickness:N1} mm.");
             Console.WriteLine($"Required glass thickness for left/right panel {sidePanelThickness:N0} mm, minimum was {sidePanelMinimumThickness:N1} mm.");
 
             Console.WriteLine();
@@ -87,7 +85,7 @@ namespace Example2
 
         private static void PrintInvoiceFooter(double totalPrice)
         {
-            Console.WriteLine("================================================================================");
+            Console.WriteLine(new String('=', 80));
             object titleTotal = "Total:";
             Console.WriteLine($"{titleTotal,69} {totalPrice,10:N2}");
         }
@@ -101,7 +99,7 @@ namespace Example2
             string titlePrice = "Price";
             Console.WriteLine();
             Console.WriteLine($"{titleName,-40} {titleQuantity,9:N1} {titleUnit,-7} {titleUnitPrice,10:N2} {titlePrice,10:N2}");
-            Console.WriteLine("--------------------------------------------------------------------------------");
+            Console.WriteLine(new String('-', 80));
         }
 
         private static void PrintInvoiceItem(string name, double quantity, string unit, double unitPrice, double price)
