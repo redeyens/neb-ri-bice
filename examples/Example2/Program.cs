@@ -13,14 +13,14 @@ namespace Example2
             Aquarium aquarium = new Aquarium(width, length, waterLevel);
 
             Console.WriteLine();
-
-            Inventory inventory = new Inventory();
-
-            Console.WriteLine();
             Console.WriteLine($"Total glass area is {TotalArea(aquarium.Panels):N1} m^2.");
             Console.WriteLine($"Total water volume is {aquarium.Volume:N1} l.");
+            Console.WriteLine();
 
+            Inventory inventory = new Inventory();
             Invoice invoice = inventory.CreateInvoice(aquarium.Panels);
+            InvoiceView invoiceView = new InvoiceView(invoice);
+
             if (invoice.IsEmpty)
             {
                 Console.WriteLine();
@@ -28,47 +28,9 @@ namespace Example2
             }
             else
             {
-                PrintInvoice(invoice);
+                invoiceView.Show();
             }
 
-        }
-
-        private static void PrintInvoice(Invoice invoice)
-        {
-            Console.WriteLine();
-            PrintInvoiceHeader();
-
-            double totalPrice = 0.0;
-            foreach (var item in invoice.Items)
-            {
-                PrintInvoiceItem(item);
-                totalPrice += item.Price;
-            }
-
-            PrintInvoiceFooter(totalPrice);
-        }
-
-        private static void PrintInvoiceFooter(double totalPrice)
-        {
-            Console.WriteLine("================================================================================");
-            object titleTotal = "Total:";
-            Console.WriteLine($"{titleTotal,69} {totalPrice,10:N2}");
-        }
-
-        private static void PrintInvoiceHeader()
-        {
-            string titleName = "Item";
-            string titleQuantity = "Quantity";
-            string titleUnit = "Unit";
-            string titleUnitPrice = "Unit Price";
-            string titlePrice = "Price";
-            Console.WriteLine($"{titleName,-40} {titleQuantity,9:N1} {titleUnit,-7} {titleUnitPrice,10:N2} {titlePrice,10:N2}");
-            Console.WriteLine("--------------------------------------------------------------------------------");
-        }
-
-        private static void PrintInvoiceItem(InvoiceItem item)
-        {
-            Console.WriteLine($"{item.Name,-40} {item.Quantity,9:N1} {item.Unit,-7} {item.UnitPrice,10:N2} {item.Price,10:N2}");
         }
 
         private static double GetInput(string prompt)
