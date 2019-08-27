@@ -8,11 +8,11 @@ namespace Example2
         private readonly double length;
         private readonly double waterLevel;
 
-        public Aquarium(double width, double length, double waterLevel)
+        public Aquarium(AquariumDimensions dimensions)
         {
-            this.width = width;
-            this.length = length;
-            this.waterLevel = waterLevel;
+            width = dimensions.Width;
+            length = dimensions.Length;
+            waterLevel = dimensions.WaterLevel;
             panels = CreatePanels(width, length, waterLevel);
         }
 
