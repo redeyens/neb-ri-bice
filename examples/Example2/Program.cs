@@ -44,8 +44,21 @@ namespace Example2
             Console.WriteLine($"Total glass area is {TotalGlassArea(bottomPanelAreaMeters, frontPanelAreaMeters, sidePanelAreaMeters):N1} m^2.");
             Console.WriteLine($"Total water volume is {WaterVolumeLiters(width, length, waterLevel):N1} l.");
 
-            PrintInvoice(availableGlassPanelThickness, requiredGlassPanelArea);
+            if (AquariumCanBeConstructed(bottomPanelThickness, frontPanelThickness, sidePanelThickness))
+            {
+                PrintInvoice(availableGlassPanelThickness, requiredGlassPanelArea);
+            }
+            else
+            {
+                Console.WriteLine();
+                Console.WriteLine("Could not construct aquarium from available glass panels.");
+            }
 
+        }
+
+        private static bool AquariumCanBeConstructed(double bottomPanelThickness, double frontPanelThickness, double sidePanelThickness)
+        {
+            return bottomPanelThickness > 0 && frontPanelThickness > 0 && sidePanelThickness > 0;
         }
 
         private static void PrintInvoice(double[] availableGlassPanelThickness, double[] requiredGlassPanelArea)
