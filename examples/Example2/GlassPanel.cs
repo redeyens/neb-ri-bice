@@ -10,9 +10,11 @@ namespace Example2
         private readonly double betaCoef;
         private readonly double length;
         private readonly double width;
+        private readonly string name;
 
-        public GlassPanel(double length, double width, double waterLevel, double betaCoef)
+        public GlassPanel(string name, double length, double width, double waterLevel, double betaCoef)
         {
+            this.name = name;
             this.length = length;
             this.width = width;
             this.waterLevel = waterLevel;
@@ -33,6 +35,14 @@ namespace Example2
             {
                 return length * width / mmSquaredPerMeterSquared;
             }
+        }
+
+        public string Name 
+        { 
+            get
+            {
+                return name;
+            } 
         }
 
         private double GlassThickness(double waterLevel, double beta)

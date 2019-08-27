@@ -9,39 +9,40 @@ namespace Example2
         {
             double[] availableGlassPanelThickness = new double[] { 4.0, 6.0, 8.0, 10.0, 12.0, 15.0, 20.0, 30.0, 40.0, 50.0 };
             double[] glassPanelPrices = new double[] { 14.0, 18.0, 25.0, 31.0, 45.0, 100.0, 100.0, 55.0, 215.0, 300.0 };
-            double[] requiredGlassPanelArea = new double[availableGlassPanelThickness.Length];
 
             double width = GetInput("Enter width [mm]: ");
             double length = GetInput("Enter length [mm]: ");
             double waterLevel = GetInput("Enter water level (height) [mm]: ");
 
+            GlassPanel[] requiredPanels = new GlassPanel[5];
+
             double betaBottomPanel = LookupBetaForBottomPanel(length, width);
-            GlassPanel bottomPanel = new GlassPanel(length, width, waterLevel, betaBottomPanel);
-            double bottomPanelThickness = GetAvailableGlassThickness(bottomPanel.MinimumAllowedThickness, availableGlassPanelThickness);
-            AggregateRequiredPanels(bottomPanelThickness, bottomPanel.Area, requiredGlassPanelArea, availableGlassPanelThickness);
+            GlassPanel bottomPanel = new GlassPanel("bottom panel", length, width, waterLevel, betaBottomPanel);
+            requiredPanels[0] = bottomPanel;
 
             double betaFrontPanel = LookupBetaForSidePanel(length, waterLevel);
-            GlassPanel frontPanel = new GlassPanel(length, waterLevel, waterLevel, betaFrontPanel);
-            double frontPanelThickness = GetAvailableGlassThickness(frontPanel.MinimumAllowedThickness, availableGlassPanelThickness);
-            AggregateRequiredPanels(frontPanelThickness, frontPanel.Area * 2, requiredGlassPanelArea, availableGlassPanelThickness);
+            GlassPanel frontPanel = new GlassPanel("front panel", length, waterLevel, waterLevel, betaFrontPanel);
+            requiredPanels[1] = frontPanel;
+            frontPanel = new GlassPanel("back panel", length, waterLevel, waterLevel, betaFrontPanel);
+            requiredPanels[2] = frontPanel;
 
             double betaSidePanel = LookupBetaForSidePanel(width, waterLevel);
-            GlassPanel sidePanel = new GlassPanel(waterLevel, width, waterLevel, betaSidePanel);
-            double sidePanelThickness = GetAvailableGlassThickness(sidePanel.MinimumAllowedThickness, availableGlassPanelThickness);
-            AggregateRequiredPanels(sidePanelThickness, sidePanel.Area * 2, requiredGlassPanelArea, availableGlassPanelThickness);
+            GlassPanel sidePanel = new GlassPanel("left panel", waterLevel, width, waterLevel, betaSidePanel);
+            requiredPanels[3] = sidePanel;
+            sidePanel = new GlassPanel("right panel", waterLevel, width, waterLevel, betaSidePanel);
+            requiredPanels[4] = sidePanel;
 
             Console.WriteLine();
-            Console.WriteLine($"Required glass thickness for bottom panel is {bottomPanelThickness:N0} mm, minimum was {bottomPanel.MinimumAllowedThickness:N1} mm.");
-            Console.WriteLine($"Required glass thickness for front/back panel {frontPanelThickness:N0} mm, minimum was {frontPanel.MinimumAllowedThickness:N1} mm.");
-            Console.WriteLine($"Required glass thickness for left/right panel {sidePanelThickness:N0} mm, minimum was {sidePanel.MinimumAllowedThickness:N1} mm.");
+
+            double[] selectedAreaPerThickness = SelectFromAvailablePanels(requiredPanels, availableGlassPanelThickness);
 
             Console.WriteLine();
             Console.WriteLine($"Total glass area is {TotalGlassArea(bottomPanel.Area, frontPanel.Area * 2, sidePanel.Area * 2):N1} m^2.");
             Console.WriteLine($"Total water volume is {WaterVolumeLiters(width, length, waterLevel):N1} l.");
 
-            if (AquariumCanBeConstructed(bottomPanelThickness, frontPanelThickness, sidePanelThickness))
+            if (AquariumCanBeConstructed(selectedAreaPerThickness, requiredPanels))
             {
-                PrintInvoice(availableGlassPanelThickness, requiredGlassPanelArea, glassPanelPrices);
+                PrintInvoice(availableGlassPanelThickness, selectedAreaPerThickness, glassPanelPrices);
             }
             else
             {
@@ -51,9 +52,43 @@ namespace Example2
 
         }
 
-        private static bool AquariumCanBeConstructed(double bottomPanelThickness, double frontPanelThickness, double sidePanelThickness)
+        private static double[] SelectFromAvailablePanels(GlassPanel[] panels, double[] availableGlassPanelThickness)
         {
-            return bottomPanelThickness > 0 && frontPanelThickness > 0 && sidePanelThickness > 0;
+            double[] selectedAreaPerThickness = new double[availableGlassPanelThickness.Length];
+            for (int i = 0; i < panels.Length; i++)
+            {
+                GlassPanel currentPanel = panels[i];
+                double currentPanelThickness = GetAvailableGlassThickness(currentPanel.MinimumAllowedThickness, availableGlassPanelThickness);
+                AggregateRequiredPanels(currentPanelThickness, currentPanel.Area, selectedAreaPerThickness, availableGlassPanelThickness);
+                Console.WriteLine($"Required glass thickness for {currentPanel.Name} is {currentPanelThickness:N0} mm, minimum was {currentPanel.MinimumAllowedThickness:N1} mm.");
+            }
+
+            return selectedAreaPerThickness;
+        }
+
+        private static bool AquariumCanBeConstructed(double[] selectedAreaPerThickness, GlassPanel[] panels)
+        {
+            return Sum(selectedAreaPerThickness) == TotalArea(panels);
+        }
+
+        private static double TotalArea(GlassPanel[] panels)
+        {
+            double total = 0;
+            for (int i = 0; i < panels.Length; i++)
+            {
+                total += panels[i].Area;
+            }
+            return total;
+        }
+
+        private static double Sum(double[] selectedAreaPerThickness)
+        {
+            double total = 0;
+            for (int i = 0; i < selectedAreaPerThickness.Length; i++)
+            {
+                total += selectedAreaPerThickness[i];
+            }
+            return total;
         }
 
         private static void PrintInvoice(double[] availableGlassPanelThickness, double[] requiredGlassPanelArea, double[] glassPanelPrices)
